@@ -55,16 +55,16 @@ Usually, the Model class name will be the capitalised table name (single instead
 
 ```ruby
 # EXAMPLE
-# Table name: students
+# Table name: recipes
 
 # Model class
 # (in lib/album.rb)
-class Album
+class Recipe
 end
 
 # Repository class
 # (in lib/album_repository.rb)
-class AlbumRepository
+class RecipeRepository
 end
 ```
 
@@ -77,12 +77,12 @@ Define the attributes of your Model class. You can usually map the table columns
 # Table name: recipes
 
 # Model class
-# (in lib/album.rb)
+# (in lib/recipe.rb)
 
-class Album
+class Recipe
 
   # Replace the attributes by your own columns.
-  attr_accessor :id, :title, :release_year, :artist_id
+  attr_accessor :id, :name, :average_cook_time, :rating
 end
 
 # The keyword attr_accessor is a special Ruby feature
@@ -109,22 +109,22 @@ Using comments, define the method signatures (arguments and return value) and wh
 # Repository class
 # (in lib/album_repository.rb)
 
-class StudentRepository
+class RecipeRepository
 
   # Selecting all records
   # No arguments
   def all
     # Executes the SQL query:
-    # SELECT id, title, release_year, artist_id FROM recipes;
+    # SELECT id, name, average_cook_time, rating FROM recipes;
 
-    # Returns an array of Album objects.
+    # Returns an array of Recipe objects.
   end
 
   # Gets a single record by its ID
   # One argument: the id (number)
   def find(id)
     # Executes the SQL query:
-    # SELECT id, title, release_year, artist_id FROM recipes WHERE id = $1;
+    # SELECT id, name, average_cook_time, rating FROM recipes WHERE id = $1;
 
     # Returns a single Album object.
   end
@@ -153,32 +153,36 @@ These examples will later be encoded as RSpec tests.
 # EXAMPLES
 
 # 1
-# Get all students
+# Get all recipe
 
-repo = StudentRepository.new
+repo = RecipeRepository.new
 
-students = repo.all
+recipes = repo.all
 
-students.length # =>  2
+recipes.length # =>  2
 
-students[0].id # =>  1
-students[0].name # =>  'David'
-students[0].cohort_name # =>  'April 2022'
+recipes[0].id # =>  1
+recipes[0].name # =>  'Spaghetti'
+recipes[0].average_cook_time # =>  '15'
+recipes[0].average_cook_time # =>  '4'
 
-students[1].id # =>  2
-students[1].name # =>  'Anna'
-students[1].cohort_name # =>  'May 2022'
+recipes[1].id # =>  2
+recipes[1].name # =>  'Dal'
+recipes[1].average_cook_time # =>  '20'
+recipes[1].average_cook_time # =>  '5'
 
 # 2
-# Get a single student
+# Get a single recipe
 
 repo = StudentRepository.new
 
-student = repo.find(1)
+recipe = repo.find(1)
 
-student.id # =>  1
-student.name # =>  'David'
-student.cohort_name # =>  'April 2022'
+recipe.id # =>  1
+recipe.name # =>  'Spaghetti'
+recipe.average_cook_time # =>  '15'
+recipe.average_cook_time # =>  '4'
+
 
 # Add more examples for each method
 ```
@@ -194,17 +198,17 @@ This is so you get a fresh table contents every time you run the test suite.
 ```ruby
 # EXAMPLE
 
-# file: spec/student_repository_spec.rb
+# file: spec/recipe_repository_spec.rb
 
-def reset_students_table
-  seed_sql = File.read('spec/seeds_students.sql')
-  connection = PG.connect({ host: '127.0.0.1', dbname: 'students' })
+def reset_recipes_table
+  seed_sql = File.read('spec/seeds_recipes.sql')
+  connection = PG.connect({ host: '127.0.0.1', dbname: 'recipes' })
   connection.exec(seed_sql)
 end
 
 describe StudentRepository do
   before(:each) do 
-    reset_students_table
+    reset_recipes_table
   end
 
   # (your tests will go here).
